@@ -76,6 +76,7 @@
     "pace-progress": "1.0.2",
     "perfect-scrollbar": "^1.4.0",
     "popper.js": "^1.14.7",
+    "react-scripts": "^2.1.8",
     "simple-line-icons": "2.4.1"
   },
   "devDependencies": {
@@ -84,7 +85,6 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
     "autoprefixer": "^9.4.8",
-    "babel-eslint": "^10.0.1",
     "babel-plugin-transform-es2015-modules-strip": "^0.1.1",
     "browser-sync": "^2.26.3",
     "chalk": "^2.4.2",
