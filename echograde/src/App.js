@@ -237,6 +237,15 @@ class App extends Component {
       gpatotal: 0,
 
       line: {},
+      p1name: "",
+      p2name: "",
+      p3name: "",
+      p4name: "",
+      p5name: "",
+      p6name: "",
+      p7name: "",
+
+      redirectref: ""
 
     }
 
@@ -248,8 +257,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's549571';
-    const pass = '549571Bj';
+    const user = 's565254';
+    const pass = 'Mguz0726';
 
     scraper.scrapeReport(user, pass)
       .then(({ data }) => {
@@ -261,6 +270,7 @@ class App extends Component {
         var per5 = studData[5].course
         var per6 = studData[6].course
         var per7 = studData[7].course
+
 
 
 
@@ -372,8 +382,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's549571';
-    const pass = '549571Bj';
+    const user = 's565254';
+    const pass = 'Mguz0726';
 
 
     if ((this.state.isFetched1) === true) {
@@ -382,6 +392,15 @@ class App extends Component {
         .then(({ data }) => {
           let gradeData = data // gradebook
           var class1grade = gradeData.grade;
+
+          var class1Name = gradeData.course
+          this.setState({
+
+            p1name: class1Name
+
+          })
+
+
           console.log(class1grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
@@ -416,6 +435,13 @@ class App extends Component {
           let gradeData = data // gradebook
           var class2Grade = gradeData.grade;
 
+          var class2Name = gradeData.course
+          this.setState({
+
+            p2name: class2Name
+
+          })
+
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
             this.setState({
@@ -441,11 +467,23 @@ class App extends Component {
     }
     else if ((this.state.isFetched3) === true) {
       console.log("fetched 3")
+
+
+
       scraper.scrapeGradebook(user, pass, { course: this.state.per3Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
           var class3grade = gradeData.grade;
           console.log(class3grade);
+
+
+          var class3Name = gradeData.course
+          this.setState({
+
+            p3name: class3Name
+
+          })
+
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
             this.setState({
@@ -479,6 +517,15 @@ class App extends Component {
           let gradeData = data // gradebook
           var class4grade = gradeData.grade
           console.log(class4grade);
+
+
+          var class4Name = gradeData.course
+          this.setState({
+
+            p4name: class4Name
+
+          })
+
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
             this.setState({
@@ -513,6 +560,14 @@ class App extends Component {
           let gradeData = data // gradebook
           var class5grade = gradeData.grade;
           console.log(class5grade);
+
+          var class5Name = gradeData.course
+          this.setState({
+
+            p5name: class5Name
+
+          })
+
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
             this.setState({
@@ -546,6 +601,13 @@ class App extends Component {
 
           var class6grade = gradeData.grade;
 
+          var class6Name = gradeData.course
+          this.setState({
+
+            p6name: class6Name
+
+          })
+
           console.log(class6grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
@@ -578,6 +640,14 @@ class App extends Component {
           //alert(gradeData.gradebook[1].assignments[0]);
           var class7grade = gradeData.grade
           console.log(class7grade);
+
+          var class7Name = gradeData.course
+          this.setState({
+
+            p7name: class7Name
+
+          })
+
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
             this.setState({
@@ -883,6 +953,18 @@ class App extends Component {
           })
 
 
+          var points = [this.state.class1Grade, this.state.class2Grade, this.state.class3Grade, this.state.class4Grade, this.state.class5Grade, this.state.class6Grade, this.state.class7Grade]
+
+          points.sort(function (a, b) { return a - b });
+
+          this.setState({
+            redirectref: "https://www.khanacademy.org/humanities/us-history/ap-us-history"
+          })
+
+
+
+
+
 
 
 
@@ -928,58 +1010,56 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App sidebar-is-reduced">
 
 
-        <body class="sidebar-is-reduced">
-          <header class="l-header">
-            <div class="l-header__inner clearfix">
-              <div class="c-header-icon js-hamburger">
-                <div class="hamburger-toggle"><span class="bar-top"></span><span class="bar-mid"></span><span class="bar-bot"></span></div>
-              </div>
-              <div class="c-header-icon has-dropdown">
-              </div>
-              <div class="c-search">
-                <input class="c-search__input u-input" placeholder="Search..." type="text" />
-              </div>
+        <header className="l-header">
+          <div className="l-header__inner clearfix">
+            <div className="c-header-icon js-hamburger">
+              <div className="hamburger-toggle"><span className="bar-top"></span><span className="bar-mid"></span><span className="bar-bot"></span></div>
             </div>
-          </header>
-          <div class="l-sidebar">
-            <div class="logo">
-              <div class="logo__txt">E</div>
+            <div className="c-header-icon has-dropdown">
             </div>
-            <div class="l-sidebar__content">
-              <nav class="c-menu js-menu">
-                <ul class="u-list">
-                  <li class="c-menu__item is-active" data-toggle="tooltip" title="Home">
-                    <div class="c-menu__item__inner"><i class="fas fa-home"></i>
-                      <div class="c-menu-item__title"><span>Home</span></div>
-                    </div>
-                  </li>
-                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Statistics">
-                    <div class="c-menu__item__inner"><i class="far fa-chart-bar"></i>
-                      <div class="c-menu-item__title"><span>Statistics</span></div>
-                    </div>
-                  </li>
-                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Schedule">
-                    <div class="c-menu__item__inner"><i class="far fa-clock"></i>
-                      <div class="c-menu-item__title"><span>Schedule</span></div>
-                    </div>
-                  </li>
-                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Recommendations">
-                    <div class="c-menu__item__inner"><i class="fas fa-brain"></i>
-                      <div class="c-menu-item__title"><span>recommendations</span></div>
-                    </div>
-                  </li>
-                </ul>
-              </nav>
+            <div className="c-search">
+              <input className="c-search__input u-input" placeholder="Search..." type="text" />
             </div>
           </div>
-        </body>
-        <main class="l-main">
-          <div class="content-wrapper content-wrapper--with-bg">
-            <h1 class="page-title">Dashboard</h1>
-            <div class="page-content">
+        </header>
+        <div className="l-sidebar">
+          <div className="logo">
+            <div className="logo__txt">E</div>
+          </div>
+          <div className="l-sidebar__content">
+            <nav className="c-menu js-menu">
+              <ul className="u-list">
+                <li className="c-menu__item is-active" data-toggle="tooltip" title="Home">
+                  <div className="c-menu__item__inner"><i className="fas fa-home"></i>
+                    <div className="c-menu-item__title"><span>Home</span></div>
+                  </div>
+                </li>
+                <li className="c-menu__item has-submenu" data-toggle="tooltip" title="Statistics">
+                  <div className="c-menu__item__inner"><i className="far fa-chart-bar"></i>
+                    <div className="c-menu-item__title"><span>Statistics</span></div>
+                  </div>
+                </li>
+                <li className="c-menu__item has-submenu" data-toggle="tooltip" title="Schedule">
+                  <div className="c-menu__item__inner"><i className="far fa-clock"></i>
+                    <div className="c-menu-item__title"><span>Schedule</span></div>
+                  </div>
+                </li>
+                <li className="c-menu__item has-submenu" data-toggle="tooltip" title="Recommendations">
+                  <div className="c-menu__item__inner"><i className="fas fa-brain"></i>
+                    <div className="c-menu-item__title"><span>recommendations</span></div>
+                  </div>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <main className="l-main">
+          <div className="content-wrapper content-wrapper--with-bg">
+            <h1 className="page-title">Dashboard</h1>
+            <div className="page-content">
 
               <Row className="form-cont"><Col xs="12">
 
@@ -987,17 +1067,52 @@ class App extends Component {
               </Col></Row>
               <Row>
                 <Col xs="12">
-                  <table class="container">
+                  <table className="container">
                     <thead>
                       <tr>
                         <th><h1>Class Name</h1></th>
-                        <th><h1>Period 1</h1></th>
-                        <th><h1>Period 2</h1></th>
-                        <th><h1>Period 3</h1></th>
-                        <th><h1>Period 4</h1></th>
-                        <th><h1>Period 5</h1></th>
-                        <th><h1>Period 6</h1></th>
-                        <th><h1>Period 7</h1></th>
+                        <th>
+                          <h1>Period 1</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p1name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 2</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p2name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 3</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p3name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 4</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p4name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 5</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p5name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 6</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p6name}</h3>
+                        </th>
+                        <th>
+                          <h1>Period 7</h1>
+                          <br>
+                          </br>
+                          <h3>{this.state.p7name}</h3>
+                        </th>
                       </tr>
                       <tr>
                         <th><h1>Grade</h1></th>
@@ -1021,6 +1136,17 @@ class App extends Component {
                   </table>
                 </Col>
               </Row>
+              <Row><Col>
+                <Card>
+                  <CardHeader>
+                    <h1 className="white">Current GPA:</h1>
+                    <div className="card-header-actions" />
+                  </CardHeader>
+                  <CardBody>
+                    <h1 className="blue underlined">{this.state.gpatotal}</h1>
+                  </CardBody>
+                </Card>
+              </Col></Row>
               <Row>
                 <Col xs="12">
                   <Card>
@@ -1031,6 +1157,22 @@ class App extends Component {
                     <CardBody>
                       <div className="chart-wrapper">
                         <Line className="blue" data={this.state.line} options={options} />
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs="12">
+                  <Card>
+                    <CardHeader>
+                      <h1 className="white">Course Suggestions</h1>
+                      <div className="card-header-actions" />
+                    </CardHeader>
+                    <CardBody>
+                      <h3>Based on your academic performance, here is what we recomend for you!</h3>
+                      <div class="button-container">
+                        <a target="_blank" href={this.state.redirectref} class="btn"><span>View Material</span></a>
                       </div>
                     </CardBody>
                   </Card>
