@@ -285,8 +285,13 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
+<<<<<<< HEAD
     const user = demoUsername
     const pass = demoPassword
+=======
+    const user = 'sxxxxxx';
+    const pass = 'xxxxxxxx';
+>>>>>>> 38d5371c2b8cf492170a7576ef168a7228c9312a
 
     scraper.scrapeReport(user, pass)
       .then(({ data }) => {
@@ -410,8 +415,13 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
+<<<<<<< HEAD
     const user = demoUsername;
     const pass = demoPassword
+=======
+    const user = 'sxxxxxx';
+    const pass = 'xxxxxxxx';
+>>>>>>> 38d5371c2b8cf492170a7576ef168a7228c9312a
 
 
     if ((this.state.isFetched1) === true) {
