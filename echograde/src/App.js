@@ -1087,7 +1087,7 @@ class App extends Component {
                 </li>
                 <li className="c-menu__item has-submenu" data-toggle="tooltip" title="Recommendations">
                   <div className="c-menu__item__inner"><i className="fas fa-brain"></i>
-                    <div className="c-menu-item__title"><span>recommendations</span></div>
+                    <div className="c-menu-item__title"><span>Recommendations</span></div>
                   </div>
                 </li>
               </ul>
@@ -1208,7 +1208,7 @@ class App extends Component {
                       <div className="card-header-actions" />
                     </CardHeader>
                     <CardBody>
-                      <h3>Based on your academic performance, here is what we recomend for you!</h3>
+                      <h3>Based on your academic performance, here is what we recommend for you!</h3>
                       <div class="button-container">
                         <a target="_blank" href={this.state.redirectref} class="btn"><span>View Material</span></a>
                       </div>
