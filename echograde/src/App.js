@@ -2,18 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import firebase from "firebase"
 import $ from "jquery"
-import { Line, Radar } from "react-chartjs-2";
-import { CustomTooltips } from "@coreui/coreui-plugin-chartjs-custom-tooltips";
+import { Line } from "react-chartjs-2";
 
 import {
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
-  CardTitle,
   Col,
   Row,
-  Table, Badge
 } from "reactstrap";
 
 // Initialize Firebase
@@ -101,8 +97,8 @@ Dashboard.init();
 */
 
 
-const demoUsername = 's565254';
-const demoPassword = 'Mguz0726';
+const demoUsername = 's549571';
+const demoPassword = '549571Bj';
 
 /*
 ############################################################
