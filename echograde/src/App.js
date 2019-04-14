@@ -1,7 +1,20 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import firebase from "firebase"
+import $ from "jquery"
+import { Line, Radar } from "react-chartjs-2";
+import { CustomTooltips } from "@coreui/coreui-plugin-chartjs-custom-tooltips";
+
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Col,
+  Row,
+  Table, Badge
+} from "reactstrap";
 
 // Initialize Firebase
 var config = {
@@ -17,7 +30,69 @@ firebase.initializeApp(config);
 
 
 
+
+const options = {
+  tooltips: {
+    enabled: true,
+  },
+  maintainAspectRatio: false
+};
+
+
+
+
+
+
+let Dashboard = (() => {
+  let global = {
+    tooltipOptions: {
+      placement: "right"
+    },
+    menuClass: ".c-menu"
+  };
+
+  let menuChangeActive = el => {
+    let hasSubmenu = ($(el).hasClass("has-submenu"));
+    $(global.menuClass + " .is-active").removeClass("is-active");
+    $(el).addClass("is-active");
+
+    // if (hasSubmenu) {
+    // 	$(el).find("ul").slideDown();
+    // }
+  };
+
+  let sidebarChangeWidth = () => {
+    let $menuItemsTitle = $("li .menu-item__title");
+
+    $("body").toggleClass("sidebar-is-reduced sidebar-is-expanded");
+    $(".hamburger-toggle").toggleClass("is-opened");
+
+    if ($("body").hasClass("sidebar-is-expanded")) {
+      $('[data-toggle="tooltip"]').tooltip("destroy");
+    } else {
+    }
+
+  };
+
+  return {
+    init: () => {
+      $(".js-hamburger").on("click", sidebarChangeWidth);
+
+      $(".js-menu li").on("click", e => {
+        menuChangeActive(e.currentTarget);
+      });
+    }
+  };
+})();
+
+Dashboard.init();
+
+
 class App extends Component {
+
+
+
+
 
 
   constructor(props) {
@@ -159,7 +234,9 @@ class App extends Component {
       class6w: false,
       class7w: false,
 
-      gpatotal: 0
+      gpatotal: 0,
+
+      line: {},
 
     }
 
@@ -227,10 +304,57 @@ class App extends Component {
   }
 
   componentDidMount() {
+
+
+
+
     this.timerID = setInterval(
       () => this.tick(),
       1000
     );
+    let Dashboard = (() => {
+      let global = {
+        tooltipOptions: {
+          placement: "right"
+        },
+        menuClass: ".c-menu"
+      };
+
+      let menuChangeActive = el => {
+        let hasSubmenu = ($(el).hasClass("has-submenu"));
+        $(global.menuClass + " .is-active").removeClass("is-active");
+        $(el).addClass("is-active");
+
+        // if (hasSubmenu) {
+        // 	$(el).find("ul").slideDown();
+        // }
+      };
+
+      let sidebarChangeWidth = () => {
+        let $menuItemsTitle = $("li .menu-item__title");
+
+        $("body").toggleClass("sidebar-is-reduced sidebar-is-expanded");
+        $(".hamburger-toggle").toggleClass("is-opened");
+
+        if ($("body").hasClass("sidebar-is-expanded")) {
+        } else {
+        }
+
+      };
+
+      return {
+        init: () => {
+          $(".js-hamburger").on("click", sidebarChangeWidth);
+
+          $(".js-menu li").on("click", e => {
+            menuChangeActive(e.currentTarget);
+          });
+
+        }
+      };
+    })();
+
+    Dashboard.init();
   }
 
   componentWillUnmount() {
@@ -238,6 +362,8 @@ class App extends Component {
   }
 
   tick() {
+
+
 
 
     const skyward = require('skyward-rest')
@@ -255,20 +381,32 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per1Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class1grade = (gradeData.grade);
-          console.log(gradeData.grade);
-
+          var class1grade = gradeData.grade;
+          console.log(class1grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class1w: true,
               class1Grade: class1grade
             })
           }
-        });
-      this.setState({
-        isFetched1: false,
 
-      })
+
+          else {
+            this.setState({
+              class1w: false,
+              class1Grade: class1grade
+            })
+          }
+
+
+          this.setState({
+            isFetched1: false,
+
+          })
+
+        });
+
 
     }
     else if ((this.state.isFetched2) === true) {
@@ -276,20 +414,29 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per2Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class2grade = (gradeData.grade);
-          console.log(gradeData.grade);
+          var class2Grade = gradeData.grade;
 
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class2w: true,
-              class2grade: class2grade
+              class2Grade: class2Grade,
+              isFetched2: false
             })
           }
-        });
-      this.setState({
-        isFetched2: false,
 
-      })
+          else {
+            this.setState({
+              class2w: false,
+              class2Grade: class2Grade,
+              isFetched2: false
+            })
+          }
+
+
+
+        });
+
 
     }
     else if ((this.state.isFetched3) === true) {
@@ -297,19 +444,31 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per3Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class3grade = (gradeData.grade);
-          console.log(gradeData.grade);
+          var class3grade = gradeData.grade;
+          console.log(class3grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class3w: true,
               class3Grade: class3grade
             })
           }
-        });
-      this.setState({
-        isFetched3: false,
 
-      })
+          else {
+            this.setState({
+              class3w: false,
+              class3Grade: class3grade
+            })
+          }
+
+
+          this.setState({
+            isFetched3: false,
+
+          })
+
+        });
+
 
     }
 
@@ -318,19 +477,32 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per4Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class4grade = (gradeData.grade);
-          console.log(gradeData.grade);
+          var class4grade = gradeData.grade
+          console.log(class4grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class4w: true,
               class4Grade: class4grade
             })
           }
-        });
-      this.setState({
-        isFetched4: false,
 
-      })
+
+          else {
+            this.setState({
+              class4w: false,
+              class4Grade: class4grade
+            })
+          }
+
+
+
+          this.setState({
+            isFetched4: false,
+
+          })
+
+        });
 
     }
 
@@ -339,19 +511,29 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per5Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class5grade = (gradeData.grade);
-          console.log(gradeData.grade);
+          var class5grade = gradeData.grade;
+          console.log(class5grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class5w: true,
               class5Grade: class5grade
             })
           }
-        });
-      this.setState({
-        isFetched5: false,
 
-      })
+          else {
+            this.setState({
+              class5w: false,
+              class5Grade: class5grade
+            })
+          }
+
+          this.setState({
+            isFetched5: false,
+
+          })
+        });
+
 
     }
 
@@ -360,20 +542,31 @@ class App extends Component {
       scraper.scrapeGradebook(user, pass, { course: this.state.per6Num, bucket: 'SEM 1' })
         .then(({ data }) => {
           let gradeData = data // gradebook
-          var class6grade = (gradeData.grade);
-          //alert(gradeData.gradebook[1].assignments[0]);
-          console.log(gradeData.grade);
+
+
+          var class6grade = gradeData.grade;
+
+          console.log(class6grade);
           if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
+            console.log("AP Course")
             this.setState({
               class6w: true,
               class6Grade: class6grade
             })
           }
-        });
-      this.setState({
-        isFetched6: false,
+          else {
+            this.setState({
+              class6w: false,
+              class6Grade: class6grade
+            })
+          }
 
-      })
+          this.setState({
+            isFetched6: false,
+
+          })
+        });
+
 
     }
 
@@ -383,253 +576,338 @@ class App extends Component {
         .then(({ data }) => {
           let gradeData = data // gradebook
           //alert(gradeData.gradebook[1].assignments[0]);
-          var class7grade = (gradeData.grade);
-          if (gradeData.course.indexOf('AP') > -1) {
+          var class7grade = gradeData.grade
+          console.log(class7grade);
+          if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
             console.log("AP Course")
-            if ((gradeData.course.indexOf('AP') > -1) || (gradeData.course.indexOf('PreAP')) || (gradeData.course.indexOf('(DC)'))) {
-              this.setState({
-                class7w: true,
-                class7Grade: class7grade
-              })
+            this.setState({
+              class7w: true,
+              class7Grade: class7grade
+            })
+          }
+          else {
+            this.setState({
+              class7w: false,
+              class7Grade: class7grade
+            })
+          }
+
+
+
+          if (this.state.class1w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class1Grade == countGrade) {
+                var gpa1 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class1Grade < 70) {
+                gpa1 = 0;
+              }
+            }
+          } else if (this.state.class1w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class1Grade == countGrade) {
+                gpa1 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class1Grade < 70) {
+                gpa1 = 0;
+              }
             }
           }
-        });
-      this.setState({
-        isFetched7: false,
 
-      })
+          // period 2
+
+          if (this.state.class2w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class2Grade == countGrade) {
+                var gpa2 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class2Grade < 70) {
+                basegpa = 0
+                gpa2 = basegpa;
+              }
+            }
+          } else if (this.state.class2w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class2Grade == countGrade) {
+                gpa2 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class2Grade < 70) {
+                basegpa = 0
+                gpa2 = basegpa;
+              }
+            }
+          }
+
+
+
+
+
+          // period 3
+
+          if (this.state.class3w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class3Grade == countGrade) {
+                var gpa3 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class3Grade < 70) {
+                gpa3 = 0;
+              }
+            }
+          } else if (this.state.class3w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class3Grade == countGrade) {
+                gpa3 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class3Grade < 70) {
+                gpa3 = 0;
+              }
+            }
+          }
+
+          // period 4
+
+          if (this.state.class4w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class4Grade == countGrade) {
+                var gpa4 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class4Grade < 70) {
+                gpa4 = 0;
+              }
+            }
+          } else if (this.state.class4w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class4Grade == countGrade) {
+                gpa1 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class4Grade < 70) {
+                gpa4 = 0;
+              }
+            }
+          }
+
+          // period 5
+
+          if (this.state.class5w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class5Grade == countGrade) {
+                var gpa5 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class5Grade < 70) {
+                gpa5 = 0;
+              }
+            }
+          } else if (this.state.class5w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class5Grade == countGrade) {
+                gpa5 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class5Grade < 70) {
+                gpa5 = 0;
+              }
+            }
+          }
+
+          // period 6
+
+          if (this.state.class6w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class6Grade == countGrade) {
+                var gpa6 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class6Grade < 70) {
+                gpa6 = 0;
+              }
+            }
+          } else if (this.state.class6w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class6Grade == countGrade) {
+                gpa6 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class6Grade < 70) {
+                gpa6 = 0;
+              }
+            }
+          }
+
+          // period 7
+
+          if (this.state.class7w == true) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class7Grade == countGrade) {
+                var gpa7 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class7Grade < 70) {
+                gpa7 = 0;
+              }
+            }
+          } else if (this.state.class7w == false) {
+            let countGrade = 100;
+            let basegpa = 6;
+            for (let j = 0; j < 1000; j++) {
+              if (this.state.class7Grade == countGrade) {
+                gpa7 = basegpa;
+              } else {
+                countGrade--;
+                basegpa = basegpa - 0.1;
+              }
+              if (this.state.class7Grade < 70) {
+                gpa7 = 0;
+              }
+            }
+          }
+
+          var gpaTotal = (gpa1 + gpa2 + gpa3 + gpa4 + gpa5 + gpa6 + gpa7) / 7
+          this.setState({
+            gpatotal: gpaTotal
+          })
+          console.log("gpa1 is" + gpa1)
+          console.log("gpa2 is" + gpa2)
+          console.log("gpa3 is" + gpa3)
+          console.log("gpa4 is" + gpa4)
+          console.log("gpa5 is" + gpa5)
+          console.log("gpa6 is" + gpa6)
+          console.log("gpa7 is" + gpa7)
+          console.log("gpa is" + this.state.gpatotal)
+
+
+
+
+          this.setState({
+            isFetched7: false,
+
+          })
+
+          const line = {
+            labels: [
+              "Period 1",
+              "Period 2",
+              "Period 3",
+              "Period 4",
+              "Period 5",
+              "Period 6",
+              "Period 7",
+            ],
+            datasets: [
+              {
+                label: "Average Grade Performance",
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                borderCapStyle: "butt",
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: "miter",
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [this.state.class1Grade, this.state.class2Grade, this.state.class3Grade, this.state.class4Grade, this.state.class5Grade, this.state.class6Grade, this.state.class7Grade]
+              }
+            ]
+          };
+
+          this.setState({
+            line: line,
+          })
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+
+
 
     }
+
+
+
+
 
 
     else {
       console.log("awaiting")
     }
-
-    if (this.state.class1w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class1Grade == countGrade) {
-          var gpa1 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class1Grade < 70) {
-          gpa1 = 0;
-        }
-      }
-    } else if (this.state.class1w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class1Grade == countGrade) {
-          gpa1 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class1Grade < 70) {
-          gpa1 = 0;
-        }
-      }
-    }
-
-    // period 2
-
-    if (this.state.class2w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class2Grade == countGrade) {
-          var gpa2 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class2Grade < 70) {
-          gpa2 = 0;
-        }
-      }
-    } else if (this.state.class2w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class2Grade == countGrade) {
-          gpa2 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class2Grade < 70) {
-          gpa2 = 0;
-        }
-      }
-    }
-
-    // period 3
-
-    if (this.state.class3w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class3Grade == countGrade) {
-          var gpa3 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class3Grade < 70) {
-          gpa3 = 0;
-        }
-      }
-    } else if (this.state.class3w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class3Grade == countGrade) {
-          gpa3 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class3Grade < 70) {
-          gpa3 = 0;
-        }
-      }
-    }
-
-    // period 4
-
-    if (this.state.class4w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class4Grade == countGrade) {
-          var gpa4 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class4Grade < 70) {
-          gpa4 = 0;
-        }
-      }
-    } else if (this.state.class4w  == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (this.state.class4Grade == countGrade) {
-          gpa1 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (this.state.class4Grade < 70) {
-          gpa4 = 0;
-        }
-      }
-    }
-
-    // period 5
-
-    if (this.state.class5 == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p5g == countGrade) {
-          gpa5 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p5g < 70) {
-          gpa5 = 0;
-        }
-      }
-    } else if (p5w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p5g == countGrade) {
-          gpa5 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p5g < 70) {
-          gpa5 = 0;
-        }
-      }
-    }
-
-    // period 6
-
-    if (p6w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p6g == countGrade) {
-          gpa6 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p6g < 70) {
-          gpa6 = 0;
-        }
-      }
-    } else if (p6w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p6g == countGrade) {
-          gpa6 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p6g < 70) {
-          gpa6 = 0;
-        }
-      }
-    }
-
-    // period 7
-
-    if (p7w == true) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p7g == countGrade) {
-          gpa7 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p7g < 70) {
-          gpa7 = 0;
-        }
-      }
-    } else if (p7w == false) {
-      let countGrade = 100;
-      let basegpa = 6;
-      for (let j = 0; j < 1000; j++) {
-        if (p7g == countGrade) {
-          gpa7 = basegpa;
-        } else {
-          countGrade--;
-          basegpa = basegpa - 0.1;
-        }
-        if (p7g < 70) {
-          gpa7 = 0;
-        }
-      }
-    }
-
-    var gpaTotal = (gpa1 + gpa2 + gpa3 + gpa4 + gpa5 + gpa6 + gpa7) / 7;
-    console.log(gpa1);
 
 
 
@@ -639,6 +917,11 @@ class App extends Component {
 
 
   }
+
+
+
+
+
 
 
 
@@ -646,79 +929,119 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="header">
-          <a href="#" id="menu-action">
-            <i className="fa fa-bars"></i>
-            <span>Close</span>
-          </a>
-          <div className="logo">
-            Simple Admin
-          </div>
-        </div>
-        <div className="sidebar">
-          <ul>
-            <li><a href="#"><i className="fa fa-desktop"></i><span>Desktop</span></a></li>
-            <li><a href="#"><i className="fa fa-server"></i><span>Server</span></a></li>
-            <li><a href="#"><i className="fa fa-calendar"></i><span>Calendar</span></a></li>
-            <li><a href="#"><i className="fa fa-envelope-o"></i><span>Messages</span></a></li>
-            <li><a href="#"><i className="fa fa-table"></i><span>Data Table</span></a></li>
-          </ul>
-        </div>
 
 
-        <div className="main">
-          <div className="hipsum">
-            <div className="jumbotron">
-              <h1 id="hello,-world!">Hello, world!<a className="anchorjs-link" href="#hello,-world!"><span className="anchorjs-icon"></span></a></h1>
-              <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-              <p><a className="btn btn-primary" href="#" role="button">Learn more</a></p>
+        <body class="sidebar-is-reduced">
+          <header class="l-header">
+            <div class="l-header__inner clearfix">
+              <div class="c-header-icon js-hamburger">
+                <div class="hamburger-toggle"><span class="bar-top"></span><span class="bar-mid"></span><span class="bar-bot"></span></div>
+              </div>
+              <div class="c-header-icon has-dropdown">
+              </div>
+              <div class="c-search">
+                <input class="c-search__input u-input" placeholder="Search..." type="text" />
+              </div>
             </div>
-            <p>Keffiyeh banjo keytar selfies. Actually plaid PBR&amp;B, High Life dreamcatcher kale chips master cleanse craft beer messenger bag locavore Brooklyn Blue Bottle. Freegan literally brunch kale chips small batch. Etsy iPhone gentrify photo booth. Lomo
-          keffiyeh vinyl, distillery pop-up messenger bag kale chips post-ironic DIY 90's keytar. Intelligentsia next level Pitchfork forage vinyl Marfa, normcore heirloom. Drinking vinegar asymmetrical roof party, yr artisan Carles mixtape jean shorts.</p>
-            <table className="table table-bordered">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Username</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                </tr>
-              </tbody>
-            </table>
-            <p>Slow-carb fanny pack yr Brooklyn gentrify. Fanny pack keffiyeh taxidermy, ugh viral polaroid craft beer. +1 distillery Truffaut typewriter tousled crucifix, lo-fi butcher normcore skateboard. Drinking vinegar ugh whatever sriracha. Synth tofu viral
-          butcher flexitarian. 3 wolf moon Schlitz plaid small batch kale chips blog. Fingerstache selfies freegan, Helvetica Neutra Brooklyn semiotics cred narwhal beard tousled leggings.</p>
-            <div className="row">
-              <div className="col-sm-6">
-                <p>Slow-carb fanny pack yr Brooklyn gentrify. Fanny pack keffiyeh taxidermy, ugh viral polaroid craft beer. +1 distillery Truffaut typewriter tousled crucifix, lo-fi butcher normcore skateboard. Drinking vinegar ugh whatever sriracha. Synth tofu
-              viral butcher flexitarian. 3 wolf moon Schlitz plaid small batch kale chips blog. Fingerstache selfies freegan, Helvetica Neutra Brooklyn semiotics cred narwhal beard tousled leggings.</p>
-              </div>
-              <div className="col-sm-6">
-                <p>Slow-carb fanny pack yr Brooklyn gentrify. Fanny pack keffiyeh taxidermy, ugh viral polaroid craft beer. +1 distillery Truffaut typewriter tousled crucifix, lo-fi butcher normcore skateboard. Drinking vinegar ugh whatever sriracha. Synth tofu
-              viral butcher flexitarian. 3 wolf moon Schlitz plaid small batch kale chips blog. Fingerstache selfies freegan, Helvetica Neutra Brooklyn semiotics cred narwhal beard tousled leggings.</p>
-              </div>
+          </header>
+          <div class="l-sidebar">
+            <div class="logo">
+              <div class="logo__txt">E</div>
+            </div>
+            <div class="l-sidebar__content">
+              <nav class="c-menu js-menu">
+                <ul class="u-list">
+                  <li class="c-menu__item is-active" data-toggle="tooltip" title="Home">
+                    <div class="c-menu__item__inner"><i class="fas fa-home"></i>
+                      <div class="c-menu-item__title"><span>Home</span></div>
+                    </div>
+                  </li>
+                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Statistics">
+                    <div class="c-menu__item__inner"><i class="far fa-chart-bar"></i>
+                      <div class="c-menu-item__title"><span>Statistics</span></div>
+                    </div>
+                  </li>
+                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Schedule">
+                    <div class="c-menu__item__inner"><i class="far fa-clock"></i>
+                      <div class="c-menu-item__title"><span>Schedule</span></div>
+                    </div>
+                  </li>
+                  <li class="c-menu__item has-submenu" data-toggle="tooltip" title="Recommendations">
+                    <div class="c-menu__item__inner"><i class="fas fa-brain"></i>
+                      <div class="c-menu-item__title"><span>recommendations</span></div>
+                    </div>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
-        </div>
+        </body>
+        <main class="l-main">
+          <div class="content-wrapper content-wrapper--with-bg">
+            <h1 class="page-title">Dashboard</h1>
+            <div class="page-content">
+
+              <Row className="form-cont"><Col xs="12">
+
+
+              </Col></Row>
+              <Row>
+                <Col xs="12">
+                  <table class="container">
+                    <thead>
+                      <tr>
+                        <th><h1>Class Name</h1></th>
+                        <th><h1>Period 1</h1></th>
+                        <th><h1>Period 2</h1></th>
+                        <th><h1>Period 3</h1></th>
+                        <th><h1>Period 4</h1></th>
+                        <th><h1>Period 5</h1></th>
+                        <th><h1>Period 6</h1></th>
+                        <th><h1>Period 7</h1></th>
+                      </tr>
+                      <tr>
+                        <th><h1>Grade</h1></th>
+                        <td>{this.state.class1Grade}</td>
+                        <td>{this.state.class2Grade}</td>
+                        <td>{this.state.class3Grade}</td>
+                        <td>{this.state.class4Grade}</td>
+                        <td>{this.state.class5Grade}</td>
+                        <td>{this.state.class6Grade}</td>
+                        <td>{this.state.class7Grade}</td>
+                      </tr>
+                      <tr>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+
+
+                      </tr>
+                    </tbody>
+                  </table>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs="12">
+                  <Card>
+                    <CardHeader>
+                      <h1 className="white">Grade Performance</h1>
+                      <div className="card-header-actions" />
+                    </CardHeader>
+                    <CardBody>
+                      <div className="chart-wrapper">
+                        <Line className="blue" data={this.state.line} options={options} />
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+
+
+            </div>
+          </div>
+        </main>
+
       </div>
 
     );
@@ -726,3 +1049,23 @@ class App extends Component {
 }
 
 export default App;
+
+/*
+
+                <form>
+                  <label>
+                    <input id="fname" type="text" placeholder="Username..."></input>
+                    <span>Username</span>
+                  </label>
+
+                  <label>
+                    <input type="password" placeholder="Password"></input>
+                    <span>Password</span>
+                  </label>
+
+                  <input type="submit" value="Submit"></input>
+                </form>
+
+
+
+*/
