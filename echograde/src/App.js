@@ -257,8 +257,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's565254';
-    const pass = 'Mguz0726';
+    const user = 'sxxxxxx';
+    const pass = 'xxxxxxxx';
 
     scraper.scrapeReport(user, pass)
       .then(({ data }) => {
@@ -382,8 +382,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's565254';
-    const pass = 'Mguz0726';
+    const user = 'sxxxxxx';
+    const pass = 'xxxxxxxx';
 
 
     if ((this.state.isFetched1) === true) {
