@@ -88,6 +88,32 @@ let Dashboard = (() => {
 Dashboard.init();
 
 
+
+
+/*
+############################################################
+############################################################
+############################################################
+ C H A N G E    D E M O     L O G I N     H E R E
+############################################################
+############################################################
+############################################################
+*/
+
+
+const demoUsername= 's565254';
+const demoPassword = 'Mguz0726';
+
+/*
+############################################################
+############################################################
+############################################################
+ C H A N G E    D E M O     L O G I N     H E R E
+############################################################
+############################################################
+############################################################
+*/
+
 class App extends Component {
 
 
@@ -96,6 +122,8 @@ class App extends Component {
 
 
   constructor(props) {
+
+
     super(props);
     this.state = {
       isFetched1: false,
@@ -257,8 +285,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's565254';
-    const pass = 'Mguz0726';
+    const user = demoUsername
+    const pass = demoPassword
 
     scraper.scrapeReport(user, pass)
       .then(({ data }) => {
@@ -382,8 +410,8 @@ class App extends Component {
 
     const scraper = skyward(url); // the scraper!
 
-    const user = 's565254';
-    const pass = 'Mguz0726';
+    const user = demoUsername;
+    const pass = demoPassword
 
 
     if ((this.state.isFetched1) === true) {
