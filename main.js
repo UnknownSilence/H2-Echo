@@ -4,8 +4,8 @@ const url = 'https://skyward.kleinisd.net/scripts/wsisa.dll/WService=wsEAplus/se
 
 const scraper = skyward(url); // the scraper!
 
-const user = 's606417';
-const pass = 'UnknownSilence1';
+const user = 'secret';
+const pass = 'secret';
 
 scraper.scrapeReport(user, pass)
     .then(({ data }) => {
