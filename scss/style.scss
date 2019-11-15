@@ -1,0 +1,1145 @@
+@import 'bourbon'; // http://bourbon.io/
+
+@import '../partials/variables'; // colors, fonts etc...
+
+@import '../partials/mixins'; // custom mixins
+
+@import '../partials/layout'; // responsive grid and media queries
+
+/* -------------------------------- 
+
+Primary style
+
+-------------------------------- */
+
+*,
+*::after,
+*::before {
+	box-sizing: border-box;
+}
+
+::focus {
+	color: #666666;
+}
+
+html {
+	font-size: 62.5%;
+}
+
+body {
+	font: {
+		size: 1.6rem;
+		family: $primary-font; // variables inside partials > _variables.scss
+	}
+
+	color: $color-1;
+	background-color: $color-3;
+}
+
+a {
+	color: $color-2;
+	text-decoration: none;
+}
+
+/* -------------------------------- 
+
+Navigation
+
+-------------------------------- */
+
+.cd-side-navigation {
+	position: fixed;
+	z-index: 3;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: $nav-width-small;
+	overflow: hidden;
+
+	&::before {
+		/* background color of the side navigation */
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		@include calc(width, "100% - #{$loading-bar-width}");
+		background-color: $color-8;
+	}
+
+	ul {
+		height: 100%;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	li {
+		@include calc(width, "100% - #{$loading-bar-width}");
+	}
+
+	a {
+		display: block;
+		position: relative;
+		padding: 4em 0 1.5em;
+		font-size: 1.2rem;
+		text-align: center;
+		color: lighten($color-5, 25%);
+		@include transition(background-color 0.2s, color 0.2s);
+
+		svg {
+			/* this is the icon */
+			position: absolute;
+			@include center(x);
+			top: 1.3em;
+
+			* {
+				@include transition(stroke 0.2s);
+			}
+		}
+
+		&::after {
+			/* 4px line to the right of the item - visible on hover */
+			content: '';
+			position: absolute;
+			top: 0;
+			right: -4px;
+			height: 100%;
+			width: 4px;
+			background-color: $color-1;
+			opacity: 0;
+			@include transition(opacity 0.2s);
+			pointer-events: none;
+		}
+
+		.no-touch &:hover {
+			background-color: darken($color-8, 5%);
+
+			&::after {
+				opacity: 1;
+			}
+		}
+
+		&.selected,
+		.no-touch &.selected:hover {
+			background-color: $color-6;
+			color: $color-8;
+
+			>svg * {
+				stroke: $color-1;
+			}
+		}
+	}
+
+	li:nth-of-type(2) .selected>svg *,
+	li:nth-of-type(2) .selected:hover>svg * {
+		stroke: $color-2;
+	}
+
+	li:nth-of-type(3) .selected>svg *,
+	li:nth-of-type(3) .selected:hover>svg * {
+		stroke: $color-3;
+	}
+
+	li:nth-of-type(4) .selected>svg *,
+	li:nth-of-type(4) .selected:hover>svg * {
+		stroke: $color-4;
+	}
+
+	li:nth-of-type(5) .selected>svg *,
+	li:nth-of-type(5) .selected:hover>svg * {
+		stroke: $color-7;
+	}
+
+	li:nth-of-type(6) .selected>svg *,
+	li:nth-of-type(6) .selected:hover>svg * {
+		stroke: $color-7;
+	}
+
+
+	li:nth-of-type(2) a::after {
+		background-color: $color-2;
+	}
+
+	li:nth-of-type(3) a::after {
+		background-color: $color-3;
+	}
+
+	li:nth-of-type(4) a::after {
+		background-color: $color-4;
+	}
+
+	li:nth-of-type(5) a::after {
+		background-color: $color-7;
+	}
+
+	li:nth-of-type(6) a::after {
+		background-color: $color-7;
+	}
+
+	@include MQ(S) {
+		width: $nav-width-normal;
+
+		a {
+			padding: 4em 0 1.5em;
+			font-size: 1.3rem;
+
+			svg {
+				top: 1.6em;
+			}
+		}
+	}
+}
+
+/* -------------------------------- 
+
+ Main Content
+
+-------------------------------- */
+
+.cd-main {
+	height: 100vh;
+	overflow: hidden;
+}
+
+.cd-section {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	padding-left: $nav-width-small - $loading-bar-width;
+
+	/* Force Hardware Acceleration */
+	@include backface-visibility(hidden);
+	@include transform(translateZ(0));
+
+	@include transform(translateX(-100%));
+	@include transition(transform 0s $animation-duration);
+
+	&.overflow-hidden {
+		/* this class is used to hide the scrolling bar while a new section is entering the viewport */
+		overflow: hidden;
+	}
+
+	header {
+		position: relative;
+		height: 100vh;
+		width: 100%;
+		background: $color-1;
+		overflow: hidden;
+	}
+
+	&.about header {
+		background-color: $color-2;
+	}
+
+	&.projects header {
+		background-color: $color-3;
+	}
+
+	&.testimonial header {
+		background-color: $color-4;
+	}
+
+	&.education header {
+		background-color: $color-5;
+	}
+
+	&.contact header {
+
+		background-color: $color-7;
+
+	}
+
+	.cd-scroll {
+		/* this is the arrow at the bottom of the header */
+		display: block;
+		position: absolute;
+		bottom: 60px;
+		@include calc(left, "50vw - (#{$nav-width-small} - #{$loading-bar-width})/2");
+		width: 44px;
+		height: 44px;
+
+		/* image replacement */
+		overflow: hidden;
+		text-indent: 100%;
+		white-space: nowrap;
+
+		visibility: hidden;
+		@include transition(transform 0s $animation-duration, visibility 0s $animation-duration);
+
+		@include transform(translateX(-50%) scale(0));
+		background: url('../img/cd-icon-arrow.svg') no-repeat center center;
+	}
+
+	&.visible {
+		/* this is the visible/selected section */
+		position: relative;
+		z-index: 2;
+		-webkit-overflow-scrolling: touch;
+
+		@include transform(translateX(0));
+		@include transition(transform $animation-duration 0s);
+
+		.cd-scroll {
+			visibility: visible;
+
+			@include transform(translateX(-50%) scale(1));
+			@include transition(transform 0.3s $animation-duration, visibility 0s 0s);
+
+			@include animation(cd-scroll-down 1.2s $animation-duration + 0.4s);
+			@include animation-iteration-count(2);
+		}
+	}
+
+	@include MQ(S) {
+		padding-left: $nav-width-normal - $loading-bar-width;
+
+		.cd-scroll {
+			@include calc(left, "50vw - (#{$nav-width-normal} - #{$loading-bar-width})/2");
+		}
+	}
+}
+
+@include keyframes(cd-scroll-down) {
+	0% {
+		@include transform(translateX(-50%) scale(1));
+	}
+
+	50% {
+		@include transform(translateY(10px) translateX(-50%) scale(1));
+	}
+
+	100% {
+		@include transform(translateX(-50%) scale(1));
+	}
+}
+
+.cd-title {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	/* this prevents title from jumping when the section scroll bar is visible */
+	width: calc(100vw - 90px);
+	padding: 1em;
+	color: $color-6;
+	text-align: center;
+
+	/* Force Hardware Acceleration */
+	@include backface-visibility(hidden);
+	@include transform(translateZ(0));
+
+	opacity: 0;
+	@include transform(translateY(-50%) translateX(-80px));
+	@include transition(transform 0s $animation-duration, opacity 0s $animation-duration);
+
+	h2 {
+		font-size: 2.8rem;
+		font-weight: 700;
+		margin-bottom: 20px;
+	}
+
+	span {
+		opacity: 0.6;
+	}
+
+	.visible & {
+		opacity: 1;
+		@include transform(translateY(-50%));
+		@include transition(transform 0.4s $animation-duration - 0.2s, opacity 0.4s $animation-duration - 0.2s);
+	}
+
+	@include MQ(M) {
+
+		h2 {
+			font-size: 5rem;
+		}
+	}
+}
+
+.cd-content {
+	padding: 2em 0;
+	background-color: darken($color-8);
+
+	p {
+		width: 90%;
+		max-width: 800px;
+		margin: 0 auto 2em;
+		font-size: 1.4rem;
+		line-height: 1.6;
+		color: darken($color-6, 40%);
+	}
+
+	@include MQ(M) {
+		padding: 4em 0;
+
+		p {
+			font-size: 1.6rem;
+		}
+	}
+}
+
+/* -------------------------------- 
+
+ Loading Bar
+
+-------------------------------- */
+
+#cd-loading-bar {
+	position: fixed;
+	z-index: 2;
+	left: $nav-width-small - $loading-bar-width;
+	width: $loading-bar-width;
+	visibility: hidden;
+
+	/* Force Hardware Acceleration */
+	@include backface-visibility(hidden);
+	@include transform(translateZ(0));
+
+	&.index {
+		background-color: $color-1;
+	}
+
+	&.about {
+		background-color: $color-2;
+	}
+
+	&.projects {
+		background-color: $color-3;
+	}
+
+	&.testimonial {
+		background-color: $color-4;
+	}
+
+	&.contact {
+		background-color: $color-7;
+	}
+
+	&.loading {
+		visibility: visible;
+	}
+
+	@include MQ(S) {
+		left: $nav-width-normal - $loading-bar-width;
+	}
+}
+
+
+
+
+
+/*		Testimonials					*/
+
+
+
+
+/* -------------------------------- 
+
+Main components 
+
+-------------------------------- */
+
+.cd-testimonials-wrapper {
+	position: relative;
+	width: 90%;
+	max-width: $M;
+	background-color: $color-1;
+	margin: 2em auto;
+	@include font-smoothing;
+	padding: 20px 40px 70px;
+	z-index: 1;
+
+	&::after {
+		/* quotation mark */
+		content: '\201C';
+		position: absolute;
+		top: 10px;
+		left: 0;
+		width: 50px;
+		height: 50px;
+		padding-top: 8px;
+		margin-left: -25px;
+		background: rgba(darken($color-1, 10%), .9);
+		font-family: $secondary-font;
+		color: $color-4;
+		@include font-size(70px);
+		text-align: center;
+		/* visible on big devices only */
+		display: none;
+	}
+
+	@include MQ(M) {
+		margin: 4em auto;
+		padding: 64px 50px 114px;
+	}
+
+	@include MQ(L) {
+		&::after {
+			/* quotation mark visible */
+			display: block;
+		}
+	}
+}
+
+.cd-testimonials {
+	color: $color-4;
+	text-align: center;
+	@include clearfix;
+
+	>li {
+		position: absolute;
+		opacity: 0;
+
+		&:first-child {
+			position: relative;
+			opacity: 1;
+		}
+	}
+
+	p {
+		font-family: $secondary-font;
+		font-style: italic;
+		line-height: 1.4;
+		margin-bottom: 1em;
+		padding: 0 14px;
+	}
+
+	@include MQ(M) {
+		p {
+			@include font-size(22px);
+		}
+	}
+
+	@include MQ(L) {
+		p {
+			@include font-size(26px);
+			line-height: 1.6;
+		}
+	}
+}
+
+.cd-author {
+
+	img,
+	.cd-author-info {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	img {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		margin-right: 5px;
+		box-shadow: 0 0 6px rgba(#000, .3);
+	}
+
+	.cd-author-info {
+		text-align: left;
+		line-height: 1.2;
+
+		li:first-child {
+			@include font-size(14px);
+		}
+
+		li:last-child {
+			@include font-size(12px);
+			color: lighten($color-1, 20%);
+		}
+	}
+
+	@include MQ(M) {
+		img {
+			width: 50px;
+			height: 50px;
+		}
+
+		.cd-author-info {
+			line-height: 1.4;
+
+			li:first-child {
+				@include font-size(16px);
+			}
+
+			li:last-child {
+				@include font-size(14px);
+			}
+		}
+	}
+}
+
+.flex-direction-nav li {
+	position: absolute;
+	height: 100%;
+	width: 40px;
+	top: 0;
+
+	&:first-child {
+		left: 0;
+	}
+
+	&:last-child {
+		right: 0;
+	}
+
+	a {
+		display: block;
+		height: 100%;
+		width: 100%;
+
+		/* image replacement */
+		overflow: hidden;
+		text-indent: 100%;
+		white-space: nowrap;
+		@include transition(background-color .2s);
+
+		.no-touch &:hover {
+			background-color: darken($color-1, 3%);
+		}
+
+		&::before,
+		&::after {
+			/* left and right arrows in css only */
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			width: 2px;
+			height: 13px;
+			background-color: $color-4;
+		}
+
+		&::before {
+			@include transform(translateY(-35px) rotate(45deg));
+		}
+
+		&::after {
+			@include transform(translateY(-27px) rotate(-45deg));
+		}
+	}
+
+	&:last-child a::before {
+		@include transform(translateY(-35px) rotate(-45deg));
+	}
+
+	&:last-child a::after {
+		@include transform(translateY(-27px) rotate(45deg));
+	}
+
+	@include MQ(M) {
+		width: 50px;
+	}
+
+	@include MQ(L) {
+
+		a::before,
+		a::after {
+			background-color: lighten($color-1, 15%);
+			@include transition(background-color .2s);
+		}
+
+		a:hover::before,
+		a:hover::after {
+			background-color: $color-4;
+		}
+	}
+}
+
+.cd-see-all {
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 50px;
+	line-height: 50px;
+	background-color: darken($color-1, 8%);
+	text-align: center;
+	text-transform: uppercase;
+	color: lighten($color-1, 20%);
+	font-weight: 700;
+	@include font-size(12px);
+	@include transition(color, .2s);
+
+	.no-touch &:hover {
+		color: $color-2;
+	}
+}
+
+.cd-testimonials-all {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background-color: $color-4;
+	z-index: 2;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: opacity .3s 0s, visibility 0s .3s;
+	-moz-transition: opacity .3s 0s, visibility 0s .3s;
+	transition: opacity .3s 0s, visibility 0s .3s;
+
+	.cd-testimonials-all-wrapper {
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		width: 100%;
+		overflow: auto;
+
+		>ul {
+			width: 90%;
+			max-width: $L;
+			margin: 4em auto;
+			@include clearfix;
+		}
+	}
+
+	.cd-testimonials-item {
+		margin-bottom: 2em;
+		opacity: 0;
+		/* Force Hardware Acceleration in WebKit */
+		@include transform(translate3d(0, 0, 0) scale(.4));
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+
+		-webkit-transition: -webkit-transform .3s, opacity .3s;
+		-moz-transition: -moz-transform .3s, opacity .3s;
+		transition: transform .3s, opacity .3s;
+	}
+
+	p {
+		position: relative;
+		background: $color-2;
+		color: $color-4;
+		padding: 2em;
+		@include font-smoothing;
+		line-height: 1.4;
+		@include border-radius;
+		margin-bottom: 1em;
+
+		&::after {
+			/* creating the triangle in css */
+			content: '';
+			position: absolute;
+			top: 100%;
+			left: 2em;
+			height: 0;
+			width: 0;
+			border: 8px solid transparent;
+			border-top-color: $color-2;
+		}
+	}
+
+	.cd-author {
+		text-align: left;
+		margin-left: 1.5em;
+
+		img {
+			box-shadow: 0 0 0 rgba(#000, 0);
+		}
+	}
+
+	&.is-visible {
+		visibility: visible;
+		opacity: 1;
+		-webkit-transition: opacity .3s 0s, visibility 0s 0s;
+		-moz-transition: opacity .3s 0s, visibility 0s 0s;
+		transition: opacity .3s 0s, visibility 0s 0s;
+
+		.cd-testimonials-all-wrapper {
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.cd-testimonials-item {
+			// @include animation(cd-slide-in .3s);
+			opacity: 1;
+			@include transform(translate3d(0, 0, 0) scale(1));
+		}
+	}
+
+	@include MQ(M) {
+		.cd-testimonials-item {
+			width: 46%;
+			margin: 0 2% 3em;
+		}
+
+		.cd-author {
+			margin-left: 1em;
+		}
+	}
+
+	@include MQ(L) {
+		.cd-testimonials-item {
+			width: 30%;
+			margin: 0 1.6666% 3em;
+		}
+	}
+}
+
+.close-btn {
+	position: fixed;
+	display: block;
+	width: 40px;
+	height: 40px;
+	top: 10px;
+	right: 5%;
+
+	/* image replacement */
+	overflow: hidden;
+	text-indent: 100%;
+	white-space: nowrap;
+
+	&::before,
+	&::after {
+		/* close icon in css */
+		content: '';
+		position: absolute;
+		display: inline-block;
+		width: 2px;
+		height: 24px;
+		top: 8px;
+		left: 19px;
+		background-color: $color-1;
+	}
+
+	&::before {
+		@include transform(rotate(45deg));
+	}
+
+	&::after {
+		@include transform(rotate(-45deg));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* -------------------------------- 
+Slider
+-------------------------------- */
+
+.cd-slider-wrapper {
+	position: relative;
+	height: 100vh;
+	padding: 10px;
+
+	@include MQ(M) {
+		padding: 30px;
+	}
+}
+
+.cd-slider {
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	overflow: hidden;
+
+	li {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		@include transform(translateX(100%));
+		@include transition(transform $animation-duration);
+
+		&.is-visible {
+			@include transform(translateX(0));
+		}
+	}
+
+	.cd-half-block {
+		height: 50%;
+		background-position: center center;
+		background-repeat: no-repeat;
+	}
+
+	li:first-of-type .image {
+		background-image: url(../img/img-1.jpg);
+	}
+
+	li:nth-of-type(2) .image {
+		background-image: url(../img/img-2.jpg);
+	}
+
+	li:nth-of-type(3) .image {
+		background-image: url(../img/img-3.jpg);
+	}
+
+	li:nth-of-type(4) .image {
+		background-image: url(../img/img-4.jpg);
+	}
+
+	.image {
+		background-size: cover;
+	}
+
+	.content {
+		padding: 30px;
+		color: $color-5;
+		background-color: $color-1;
+		@include font-smoothing;
+	}
+
+	.light-bg {
+		color: rgba(#000, .6);
+	}
+
+	.btn {
+		display: inline-block;
+		background: rgba(#000, .2);
+		padding: 1em 1.6em;
+		margin-top: 1em;
+		font-size: 1.3rem;
+		color: $color-5;
+		border-radius: 50em;
+		@include transition(background .3s);
+
+		.no-touch &:hover {
+			background: rgba(#000, .6);
+		}
+	}
+
+	li:nth-of-type(2) .content {
+		background-color: $color-2;
+	}
+
+	li:nth-of-type(3) .content {
+		background-color: $color-3;
+	}
+
+	li:nth-of-type(4) .content {
+		background-color: $color-4;
+	}
+
+	h2 {
+		font-size: 2.2rem;
+		margin-bottom: .4em;
+	}
+
+	p {
+		font-size: 1.4rem;
+	}
+
+	h2,
+	p {
+		line-height: 1.4;
+	}
+
+
+	@include MQ(M) {
+
+		li {
+			pointer-events: none;
+			z-index: 1;
+			@include transform(translateX(0));
+			@include transition(z-index 0s $animation-duration);
+
+			&.is-visible {
+				pointer-events: auto;
+				z-index: 3;
+				@include transition(z-index 0s 0s);
+
+				&.covered {
+					/* list item still there, but covered by the list item entering the viewport (.is-visible) */
+					z-index: 2;
+				}
+			}
+		}
+
+		.cd-half-block {
+			height: 100%;
+			@include column(.5, right);
+
+			&.content {
+				@include transform(translateX(200%));
+				@include transition(transform $animation-duration 0s ease-in-out);
+			}
+
+			&.image {
+				@include transform(translateX(100%));
+				@include transition(transform 0s $animation-duration/2);
+			}
+		}
+
+		li.is-visible .cd-half-block.content,
+		li.is-visible .cd-half-block.image {
+			@include transform(translateX(0%));
+		}
+
+		li.is-visible .cd-half-block.content {
+			@include transition(transform $animation-duration 0s ease-in-out);
+		}
+
+		.content {
+			/* vertically align its content */
+			display: table;
+			padding: 0 40px;
+
+			>div {
+				/* vertically align <div> inside div.content */
+				display: table-cell;
+				vertical-align: middle;
+			}
+		}
+
+		.btn {
+			padding: 1.4em 2em;
+			font-size: 1.4rem;
+		}
+
+		p {
+			font-size: 1.6rem;
+		}
+
+		h2 {
+			font-size: 3.5rem;
+			margin-bottom: 0;
+		}
+
+		h2,
+		p {
+			line-height: 2;
+		}
+	}
+
+	@include MQ(L) {
+
+		.content {
+			padding: 0 90px;
+		}
+
+		h2 {
+			font-weight: 300;
+		}
+	}
+}
+
+/* -------------------------------- 
+Slider Navigation
+-------------------------------- */
+
+.cd-slider-navigation {
+	/* you won't see this element in the html but it will be created using jQuery */
+	position: absolute;
+	z-index: 3;
+	@include center(x);
+	bottom: 30px;
+
+	li {
+		display: inline-block;
+		margin: 0 .25em;
+
+		&.selected a {
+			background-color: $color-5;
+		}
+	}
+
+	a {
+		display: block;
+		height: 8px;
+		width: 8px;
+		border-radius: 50%;
+		color: transparent;
+		/* image replacement */
+		white-space: nowrap;
+		text-indent: 100%;
+		overflow: hidden;
+		border: 1px solid $color-5;
+	}
+
+	@include MQ(M) {
+		padding: 0.5em 1em;
+		background-color: rgba(#000, .8);
+		/* fixes a bug on Firefox with ul.cd-slider-navigation z-index */
+		@include transform(translateZ(2px) translateX(-50%));
+		@include transition(transform .3s);
+
+		&.slider-animating {
+			/* fixes a bug on Firefox with ul.cd-slider-navigation z-index */
+			@include transform(translateX(-50%) scale(1));
+		}
+
+		a {
+			height: 40px;
+			width: 40px;
+			line-height: 40px;
+			text-align: center;
+			/* reset style */
+			text-indent: 0;
+			border: none;
+			border-radius: 0;
+			color: $color-5;
+			@include font-smoothing;
+		}
+
+		li.selected a {
+			background-color: transparent;
+			color: $color-3;
+		}
+	}
+}
+
+
+
+.loadingContainer {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+.loading {
+	border: 6px solid #cccccc;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	border-top-color: #1ecd97;
+	border-left-color: #1ecd97;
+	animation: spin 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(1080deg);
+	}
+}
+
+
+.cd-main.hide {
+	display: none;
+}
+
+.cd-side-navigation.hide {
+	display: none;
+} 
+
+.loadingContainer.hide {
+	display: none;
+}
